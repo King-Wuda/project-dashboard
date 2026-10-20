@@ -1,0 +1,7 @@
+node_modules/
+dist/
+# Real project data (customer names, contract values, margins) never goes in git.
+data/
+*.xlsx
+*.xls
+.DS_Store
