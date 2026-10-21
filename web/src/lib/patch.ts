@@ -6,7 +6,7 @@ export const PROJECT_EDIT_FIELDS = [
 ] as const;
 
 /** Fields the server accepts when updating an issue (see ISSUE_FIELDS in server/store.mjs). */
-export const ISSUE_EDIT_FIELDS = ['projectId', 'customer', 'location', 'description', 'pm', 'issue', 'nextSteps', 'responsible', 'status'] as const;
+export const ISSUE_EDIT_FIELDS = ['projectId', 'customer', 'location', 'description', 'pm', 'issue', 'nextSteps', 'responsible', 'status', 'dueDate'] as const;
 
 function pick<T extends object, K extends keyof T>(o: T, keys: readonly K[]): Pick<T, K> {
   const out = {} as Pick<T, K>;

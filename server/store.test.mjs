@@ -32,4 +32,14 @@ describe('saving edits made in the UI', () => {
   it('still rejects unknown fields sent directly', () => {
     expect(() => store().patchProject('P-1', { bogus: 1 }, 'me')).toThrow(/unknown field/);
   });
+  it('stores, changes and clears an issue due date; rejects a malformed one', () => {
+    const s = store();
+    const created = s.createIssue({ issue: 'with date', dueDate: '2026-11-30' }, 'me');
+    expect(created.dueDate).toBe('2026-11-30');
+    expect(s.createIssue({ issue: 'without date' }, 'me').dueDate).toBeNull();
+    expect(s.patchIssue(created.id, issuePatch({ ...created, dueDate: '2026-12-15' }), 'me').dueDate).toBe('2026-12-15');
+    expect(s.patchIssue(created.id, { dueDate: null }, 'me').dueDate).toBeNull();
+    expect(s.history('issue', created.id)[0].changes.dueDate).toEqual(['2026-12-15', null]);
+    expect(() => s.patchIssue(created.id, { dueDate: '30/11/2026' }, 'me')).toThrow(/YYYY-MM-DD/);
+  });
 });

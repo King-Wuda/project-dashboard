@@ -9,7 +9,7 @@ const PROJECT_FIELDS = {
 };
 const ISSUE_FIELDS = {
   projectId: 'string', customer: 'string', location: 'string', description: 'string', pm: 'string',
-  issue: 'string', nextSteps: 'string', responsible: 'string', status: 'issueStatus',
+  issue: 'string', nextSteps: 'string', responsible: 'string', status: 'issueStatus', dueDate: 'date',
 };
 const STATUSES = ['Created', 'Posted', 'Administrative closed', 'Eliminated'];
 const GATE_STATES = ['', 'done', 'wip', 'risk', 'deviation', 'na'];
@@ -133,7 +133,7 @@ export class Store {
     const n = this.doc.issues.reduce((m, i) => Math.max(m, Number(String(i.id).replace(/\D/g, '')) || 0), 0) + 1;
     const item = {
       id: `I-${n}`, projectId: '', customer: '', location: '', description: '', pm: '', issue: '', nextSteps: '',
-      responsible: '', status: 'WIP', ...pick(body, ISSUE_FIELDS), updatedAt: new Date().toISOString(),
+      responsible: '', status: 'WIP', dueDate: null, ...pick(body, ISSUE_FIELDS), updatedAt: new Date().toISOString(),
     };
     if (!item.issue) throw new ValidationError('issue: describe the issue');
     this.doc.issues.push(item);

@@ -2083,7 +2083,8 @@
    "issue": "Settlement to be negotiated with customer",
    "nextSteps": "Negotiate settlement",
    "responsible": "Alex / Sam",
-   "status": "WIP"
+   "status": "WIP",
+   "dueDate": "2026-11-20"
   },
   {
    "id": "I-2",
@@ -2095,7 +2096,8 @@
    "issue": "Payments outstanding",
    "nextSteps": "Follow up with finance",
    "responsible": "Priya",
-   "status": "Overdue"
+   "status": "WIP",
+   "dueDate": "2026-10-05"
   },
   {
    "id": "I-3",
@@ -2107,7 +2109,8 @@
    "issue": "VO not yet approved",
    "nextSteps": "Write-down provision and close",
    "responsible": "Jordan",
-   "status": "Completed"
+   "status": "Completed",
+   "dueDate": "2026-09-30"
   }
  ]
 }

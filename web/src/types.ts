@@ -62,6 +62,9 @@ export interface Issue {
   nextSteps: string;
   responsible: string;
   status: IssueStatus;
+  /** YYYY-MM-DD. Optional: issues imported from the workbook have none. */
+  dueDate?: string | null;
+  updatedAt?: string;
 }
 
 export interface Meta {

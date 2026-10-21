@@ -65,11 +65,11 @@ const resources = [
 
 const issues = [
   { id: 'I-1', projectId: projects[50].id, customer: projects[50].customer, location: projects[50].location, description: projects[50].description,
-    pm: projects[50].pm, issue: 'Settlement to be negotiated with customer', nextSteps: 'Negotiate settlement', responsible: 'Alex / Sam', status: 'WIP' },
+    pm: projects[50].pm, issue: 'Settlement to be negotiated with customer', nextSteps: 'Negotiate settlement', responsible: 'Alex / Sam', status: 'WIP', dueDate: '2026-11-20' },
   { id: 'I-2', projectId: projects[49].id, customer: projects[49].customer, location: projects[49].location, description: projects[49].description,
-    pm: projects[49].pm, issue: 'Payments outstanding', nextSteps: 'Follow up with finance', responsible: 'Priya', status: 'Overdue' },
+    pm: projects[49].pm, issue: 'Payments outstanding', nextSteps: 'Follow up with finance', responsible: 'Priya', status: 'WIP', dueDate: '2026-10-05' },
   { id: 'I-3', projectId: projects[44].id, customer: projects[44].customer, location: projects[44].location, description: projects[44].description,
-    pm: projects[44].pm, issue: 'VO not yet approved', nextSteps: 'Write-down provision and close', responsible: 'Jordan', status: 'Completed' },
+    pm: projects[44].pm, issue: 'VO not yet approved', nextSteps: 'Write-down provision and close', responsible: 'Jordan', status: 'Completed', dueDate: '2026-09-30' },
 ];
 
 writeFileSync(new URL('../demo/seed.demo.json', import.meta.url), JSON.stringify({

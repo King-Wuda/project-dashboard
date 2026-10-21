@@ -5,7 +5,7 @@ It replaces the workbook as the place to see, and update, project progress end t
 
 - **Overview** – open projects, contract value, weighted RBP and progress, work done but not yet invoiced, health, lifecycle stage, value by PM, and "needs attention" lists.
 - **Projects** – every column from the workbook's first sheet, with filters, sorting and CSV export. Click a row to edit it. Closed and eliminated projects are archived (hidden by default, one click to show).
-- **Issues** – the issue log (add, edit, delete).
+- **Issues** – the issue log (add, edit, delete) with an optional due date. An open issue with a due date shows as Overdue automatically once that date has passed; issues are sorted most-late first. Issues without a due date (such as those imported from the workbook) keep the status set by hand.
 - **Resources** – the resource planner by PM, with planned handover by quarter (read-only for now).
 
 Every change is stored with the editor's name and a timestamp, and shown in each project's History.

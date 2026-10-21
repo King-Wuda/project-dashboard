@@ -7,6 +7,7 @@ import { Projects } from './components/Projects';
 import { Resources } from './components/Resources';
 import { TipProvider } from './components/ui';
 import { isArchived } from './lib/health';
+import { issueView, todayIso } from './lib/issues';
 import { date } from './lib/format';
 import { useData } from './store';
 
@@ -54,7 +55,7 @@ export function App() {
               <button key={t.key} className="tab" aria-current={nav.tab === t.key ? 'page' : undefined} onClick={() => go({ tab: t.key })}>
                 {t.label}
                 {t.key === 'projects' && <span className="count">{openCount}</span>}
-                {t.key === 'issues' && <span className="count">{state.issues.filter((i) => i.status !== 'Completed').length}</span>}
+                {t.key === 'issues' && <span className="count">{state.issues.filter((i) => issueView(i, todayIso()).status !== 'Completed').length}</span>}
               </button>
             ))}
           </nav>
