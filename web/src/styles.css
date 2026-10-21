@@ -138,6 +138,7 @@ tbody tr { cursor: pointer; }
 tbody tr:hover td { background: var(--surface-2); }
 td.wrap { white-space: normal; min-width: 240px; max-width: 360px; }
 td.proj { min-width: 300px; max-width: 380px; }
+td.wrap.sm { min-width: 180px; max-width: 280px; }
 .clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 td.sticky, th.sticky { position: sticky; left: 0; background: var(--surface); z-index: 1; }
 th.sticky { z-index: 3; }

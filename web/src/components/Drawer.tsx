@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api, getEditor } from '../api';
 import { useData } from '../store';
 import { assess, invoiceLag, unbilled } from '../lib/health';
+import { PROJECT_EDIT_FIELDS, projectPatch } from '../lib/patch';
 import { dateTime, money, moneyFull } from '../lib/format';
 import { STATUSES, type GateState, type Health, type HistoryEntry, type Project } from '../types';
 import { GATE_LABEL, GateGlyph, HEALTH_LABEL, HEALTH_VAR, HealthBadge } from './ui';
@@ -12,8 +13,7 @@ const EMPTY: Project = {
   rbp: null, poc: 0, invoiced: 0, gates: ['', '', '', '', '', '', ''], handoverSigned: false, comment: '',
 };
 
-const FIELDS = ['customer', 'location', 'description', 'level', 'pm', 'startDate', 'status', 'value', 'rbp', 'poc', 'invoiced', 'gates', 'handoverSigned', 'comment'] as const;
-const editable = (p: Project) => JSON.stringify(FIELDS.map((k) => p[k]));
+const editable = (p: Project) => JSON.stringify(PROJECT_EDIT_FIELDS.map((k) => p[k]));
 
 /** Ratios are edited as whole-number percentages. */
 const toPct = (v: number | null) => (v == null ? '' : String(Math.round(v * 1000) / 10));
@@ -54,12 +54,10 @@ export function Drawer({ id, onClose }: { id: string | 'new'; onClose: () => voi
     setBusy(true); setError('');
     try {
       if (isNew) {
-        const { id: pid, ...rest } = live;
-        await createProject({ id: pid.trim(), ...rest, healthOverride: undefined });
+        await createProject({ id: live.id.trim(), ...projectPatch(live) });
         onClose();
       } else {
-        const { id: _id, healthOverride: _ho, updatedAt: _ua, ...fields } = live;
-        await updateProject(id, fields);
+        await updateProject(id, projectPatch(live));
       }
     } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }

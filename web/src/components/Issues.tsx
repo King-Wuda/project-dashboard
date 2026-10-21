@@ -1,10 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useData } from '../store';
+import { issuePatch } from '../lib/patch';
 import type { Issue, IssueStatus } from '../types';
+import { GateGlyph, IconCheck, IconWarn } from './ui';
 
 const STATUSES: IssueStatus[] = ['WIP', 'Overdue', 'Completed'];
-const DOT: Record<IssueStatus, string> = { WIP: 'var(--seq-2)', Overdue: 'var(--crit)', Completed: 'var(--good)' };
-const ICON: Record<IssueStatus, string> = { WIP: '◐', Overdue: '▲', Completed: '✓' };
+const ICON: Record<IssueStatus, ReactNode> = {
+  WIP: <GateGlyph state="wip" />,
+  Overdue: <span style={{ color: 'var(--crit)', display: 'inline-flex' }}><IconWarn /></span>,
+  Completed: <span style={{ color: 'var(--good)', display: 'inline-flex' }}><IconCheck /></span>,
+};
 const BLANK: Partial<Issue> = { projectId: '', issue: '', nextSteps: '', responsible: '', pm: '', status: 'WIP' };
 
 export function Issues({ onOpenProject }: { onOpenProject: (id: string) => void }) {
@@ -21,8 +26,7 @@ export function Issues({ onOpenProject }: { onOpenProject: (id: string) => void 
     setError('');
     try {
       const p = rows.find((r) => r.p.id === editing.projectId)?.p;
-      const body = { ...editing, ...(p ? { customer: p.customer, location: p.location, description: p.description, pm: editing.pm || p.pm } : {}) };
-      delete body.id;
+      const body = issuePatch({ ...editing, ...(p ? { customer: p.customer, location: p.location, description: p.description, pm: editing.pm || p.pm } : {}) });
       if (editing.id) await updateIssue(editing.id, body); else await createIssue(body);
       setEditing(null);
     } catch (e) { setError((e as Error).message); }
@@ -44,22 +48,22 @@ export function Issues({ onOpenProject }: { onOpenProject: (id: string) => void 
 
       <div className="table-wrap">
         <table>
-          <thead><tr><th>Status</th><th>Project</th><th>Customer</th><th>PM</th><th>Issue</th><th>Next steps</th><th>Responsible</th><th /></tr></thead>
+          <thead><tr><th>Status</th><th>Project</th><th>PM</th><th>Issue</th><th>Next steps</th><th>Responsible</th><th /></tr></thead>
           <tbody>
             {list.map((i) => (
               <tr key={i.id} style={{ cursor: 'default' }}>
-                <td><span className="pill neutral"><span aria-hidden="true" style={{ color: DOT[i.status] }}>{ICON[i.status]}</span>{i.status}</span></td>
-                <td>
+                <td><span className="pill neutral">{ICON[i.status]}{i.status}</span></td>
+                <td className="proj">
                   {rows.some((r) => r.p.id === i.projectId)
-                    ? <button className="btn" style={{ padding: '0 8px', minHeight: 26 }} onClick={() => onOpenProject(i.projectId)}>{i.projectId}</button>
+                    ? <button className="btn" style={{ padding: '0 8px', minHeight: 24 }} onClick={() => onOpenProject(i.projectId)}>{i.projectId}</button>
                     : <span className="num">{i.projectId || '–'}</span>}
+                  <div className="faint" style={{ whiteSpace: 'normal', marginTop: 2 }}>{i.customer}{i.location && ` · ${i.location}`}</div>
                 </td>
-                <td>{i.customer}{i.location && <span className="faint"> · {i.location}</span>}</td>
                 <td>{i.pm}</td>
-                <td className="wrap">{i.issue}</td>
-                <td className="wrap">{i.nextSteps}</td>
-                <td>{i.responsible}</td>
-                <td>
+                <td className="wrap sm">{i.issue}</td>
+                <td className="wrap sm">{i.nextSteps}</td>
+                <td className="wrap sm" style={{ minWidth: 120 }}>{i.responsible}</td>
+                <td style={{ width: 1 }}>
                   <button className="btn" onClick={() => setEditing(i)}>Edit</button>{' '}
                   <button className="btn danger" onClick={() => { if (window.confirm('Delete this issue? This cannot be undone.')) removeIssue(i.id); }}>Delete</button>
                 </td>
