@@ -8,7 +8,7 @@ It replaces the workbook as the place to see, and update, project progress end t
 - **Issues** – the issue log (add, edit, delete) with an optional due date. An open issue with a due date shows as Overdue automatically once that date has passed; issues are sorted most-late first. Issues without a due date (such as those imported from the workbook) keep the status set by hand.
 - **Resources** – the resource planner by PM, with planned handover by quarter (read-only for now).
 
-Every change is stored with the editor's name and a timestamp, and shown in each project's History.
+Every change is stored with a timestamp and the editor's name, and shown in each project's History. The dashboard is single-user for now, so changes are recorded as Gerhardus Uys (`EDITOR` in `web/src/api.ts`); this becomes the signed-in user when logins are added.
 
 ## Run it
 

@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { issuePatch, projectPatch } from '../web/src/lib/patch.ts';
-import { Store } from './store.mjs';
+import { Store, decodeEditor } from './store.mjs';
 
 const project = { id: 'P-1', customer: 'c', location: '', description: 'd', level: 'L1', pm: 'A B', startDate: null, status: 'Posted', value: 1, rbp: 0.2, poc: 0.5, invoiced: 0.5, gates: ['', '', '', '', '', '', ''], handoverSigned: false, comment: '', sourceRow: 9 };
 const issue = { id: 'I-1', projectId: 'P-1', customer: 'c', location: '', description: 'd', pm: 'A B', issue: 'x', nextSteps: '', responsible: '', status: 'WIP' };
@@ -41,5 +41,16 @@ describe('saving edits made in the UI', () => {
     expect(s.patchIssue(created.id, { dueDate: null }, 'me').dueDate).toBeNull();
     expect(s.history('issue', created.id)[0].changes.dueDate).toEqual(['2026-12-15', null]);
     expect(() => s.patchIssue(created.id, { dueDate: '30/11/2026' }, 'me')).toThrow(/YYYY-MM-DD/);
+  });
+});
+
+describe('decodeEditor', () => {
+  it('decodes the URL-encoded name the browser sends', () => {
+    expect(decodeEditor(encodeURIComponent('Gerhardus Uys'))).toBe('Gerhardus Uys');
+  });
+  it('copes with missing, malformed and oversized values', () => {
+    expect(decodeEditor(undefined)).toBe('');
+    expect(decodeEditor('100%')).toBe('100%');
+    expect(decodeEditor('a'.repeat(200))).toHaveLength(80);
   });
 });

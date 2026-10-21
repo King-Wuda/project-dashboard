@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { getEditor, setEditor } from './api';
 import { Drawer } from './components/Drawer';
 import { Issues } from './components/Issues';
 import { Overview, type Nav } from './components/Overview';
@@ -25,7 +24,6 @@ export function App() {
   const { state, rows, setDataAsOf } = useData();
   const [nav, setNav] = useState<Nav>(parseHash);
   const [open, setOpen] = useState<string | null>(null);
-  const [name, setName] = useState(getEditor());
   const [theme, setTheme] = useState<string>(() => { try { return localStorage.getItem('theme') ?? 'auto'; } catch { return 'auto'; } });
 
   useEffect(() => {
@@ -63,7 +61,6 @@ export function App() {
             <label>Data as of{' '}
               <input type="date" aria-label="Data as of" value={state.meta.dataAsOf ?? ''} onChange={(e) => e.target.value && setDataAsOf(e.target.value)} title={date(state.meta.dataAsOf)} />
             </label>
-            <input type="text" placeholder="Your name" aria-label="Your name (recorded with changes)" value={name} onChange={(e) => { setName(e.target.value); setEditor(e.target.value); }} />
             <button className="btn" onClick={() => setTheme(theme === 'dark' ? 'light' : theme === 'light' ? 'auto' : 'dark')} aria-label={`Theme: ${theme}`}>
               {theme === 'dark' ? 'Dark' : theme === 'light' ? 'Light' : 'Auto'}
             </button>

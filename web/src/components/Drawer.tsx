@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api, getEditor } from '../api';
 import { useData } from '../store';
 import { assess, invoiceLag, unbilled } from '../lib/health';
-import { PROJECT_EDIT_FIELDS, projectPatch } from '../lib/patch';
+import { PROJECT_EDIT_FIELDS, changedFields, projectPatch, ratioFromText, toPct } from '../lib/patch';
 import { dateTime, money, moneyFull } from '../lib/format';
 import { STATUSES, type GateState, type Health, type HistoryEntry, type Project } from '../types';
 import { GATE_LABEL, GateGlyph, HEALTH_LABEL, HEALTH_VAR, HealthBadge } from './ui';
@@ -14,10 +14,6 @@ const EMPTY: Project = {
 };
 
 const editable = (p: Project) => JSON.stringify(PROJECT_EDIT_FIELDS.map((k) => p[k]));
-
-/** Ratios are edited as whole-number percentages. */
-const toPct = (v: number | null) => (v == null ? '' : String(Math.round(v * 1000) / 10));
-const fromPct = (s: string): number | null => (s.trim() === '' || Number.isNaN(Number(s)) ? null : Number(s) / 100);
 
 export function Drawer({ id, onClose }: { id: string | 'new'; onClose: () => void }) {
   const { rows, state, updateProject, createProject } = useData();
@@ -44,7 +40,10 @@ export function Drawer({ id, onClose }: { id: string | 'new'; onClose: () => voi
     if (!isNew) api.history('project', id).then(setHistory).catch(() => setHistory([]));
   }, [id, isNew, existing?.updatedAt]);
 
-  const live = useMemo<Project>(() => ({ ...draft, poc: fromPct(pocText), invoiced: fromPct(invText), rbp: fromPct(rbpText) }), [draft, pocText, invText, rbpText]);
+  const live = useMemo<Project>(
+    () => ({ ...draft, poc: ratioFromText(pocText, existing?.poc), invoiced: ratioFromText(invText, existing?.invoiced), rbp: ratioFromText(rbpText, existing?.rbp) }),
+    [draft, pocText, invText, rbpText, existing?.poc, existing?.invoiced, existing?.rbp],
+  );
   const a = assess({ ...live, healthOverride: existing?.healthOverride }, gateNames);
 
   const dirty = isNew || (!!existing && editable(live) !== editable(existing));
@@ -57,7 +56,7 @@ export function Drawer({ id, onClose }: { id: string | 'new'; onClose: () => voi
         await createProject({ id: live.id.trim(), ...projectPatch(live) });
         onClose();
       } else {
-        await updateProject(id, projectPatch(live));
+        if (existing) await updateProject(id, changedFields(projectPatch(live), projectPatch(existing)));
       }
     } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
@@ -65,7 +64,7 @@ export function Drawer({ id, onClose }: { id: string | 'new'; onClose: () => voi
   async function applyOverride(clear: boolean) {
     setBusy(true); setError('');
     try {
-      await updateProject(id, { healthOverride: clear ? null : { health: ovHealth, note: ovNote, by: getEditor() || 'unknown', at: '' } });
+      await updateProject(id, { healthOverride: clear ? null : { health: ovHealth, note: ovNote, by: getEditor(), at: '' } });
       setOvNote('');
     } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
@@ -218,7 +217,6 @@ export function Drawer({ id, onClose }: { id: string | 'new'; onClose: () => voi
           <button className="btn primary" disabled={busy || !dirty || (isNew && !draft.id.trim())} onClick={save}>{isNew ? 'Add project' : 'Save changes'}</button>
           {!isNew && dirty && <button className="btn" onClick={() => { if (existing) { setDraft(existing); setPocText(toPct(existing.poc)); setInvText(toPct(existing.invoiced)); setRbpText(toPct(existing.rbp)); } }}>Discard</button>}
           {error && <span className="err" role="alert">{error}</span>}
-          {!getEditor() && <span className="faint" style={{ marginLeft: 'auto' }}>Tip: enter your name (top right) so changes are attributed.</span>}
         </div>
       </aside>
     </>

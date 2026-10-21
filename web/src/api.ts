@@ -1,17 +1,13 @@
 import type { AppState, HistoryEntry, Issue, Project } from './types';
 
-let editor = '';
-try { editor = localStorage.getItem('editor') ?? ''; } catch { /* storage unavailable */ }
-export const getEditor = () => editor;
-export function setEditor(name: string) {
-  editor = name;
-  try { localStorage.setItem('editor', name); } catch { /* storage unavailable */ }
-}
+/** Single-user for now: every change is recorded under this name. Replace with the signed-in user when logins are added. */
+export const EDITOR = 'Gerhardus Uys';
+export const getEditor = () => EDITOR;
 
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
     method,
-    headers: { 'Content-Type': 'application/json', 'X-Editor': encodeURIComponent(editor) },
+    headers: { 'Content-Type': 'application/json', 'X-Editor': encodeURIComponent(EDITOR) },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));

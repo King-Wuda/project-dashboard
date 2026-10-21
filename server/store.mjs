@@ -18,6 +18,14 @@ const MAX_TEXT = 4000;
 
 export class ValidationError extends Error {}
 
+/** The X-Editor header is URL-encoded by the browser ("Gerhardus%20Uys"). */
+export function decodeEditor(header) {
+  const raw = String(header ?? '');
+  let name;
+  try { name = decodeURIComponent(raw); } catch { name = raw; }
+  return name.replace(/[\u0000-\u001f]/g, '').trim().slice(0, 80);
+}
+
 function coerce(kind, v, field) {
   const bad = (m) => { throw new ValidationError(`${field}: ${m}`); };
   switch (kind) {

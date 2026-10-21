@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Store, ValidationError } from './store.mjs';
+import { Store, ValidationError, decodeEditor } from './store.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const port = Number(process.env.PORT ?? 8787);
@@ -32,7 +32,7 @@ function readBody(req) {
 }
 
 async function api(req, res, url) {
-  const by = String(req.headers['x-editor'] ?? '').slice(0, 80);
+  const by = decodeEditor(req.headers['x-editor']);
   const parts = url.pathname.split('/').filter(Boolean).slice(1).map(decodeURIComponent); // after "api"
   const [kind, id, sub] = parts;
   const m = req.method;
