@@ -189,3 +189,12 @@ tbody tr:hover td.sticky { background: var(--surface-2); }
 
 .note-banner { background: var(--accent-wash); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; font-size: 13px; color: var(--ink-2); }
 @media print { .topbar, .filters, .drawer, .scrim { display: none !important; } }
+
+/* standalone (single-file) build */
+.pilot-banner { background: var(--accent-wash); border-bottom: 1px solid var(--line); padding: 6px 20px; font-size: 13px; color: var(--ink-2); text-align: center; }
+.pilot-banner.warn { background: var(--warn-wash); color: var(--ink); }
+.menu-wrap { position: relative; }
+.menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 60; min-width: 260px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 8px; box-shadow: 0 6px 24px rgb(0 0 0 / 18%); padding: 4px; display: grid; }
+.menu button { background: none; border: 0; text-align: left; padding: 8px 10px; border-radius: 6px; font-size: 13px; }
+.menu button:hover { background: var(--surface-2); }
+.menu button.danger { color: var(--crit); }

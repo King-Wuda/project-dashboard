@@ -11,7 +11,8 @@
     "build": "tsc --noEmit && vite build",
     "start": "node server/index.mjs",
     "test": "vitest run",
-    "import": "python3 scripts/import_workbook.py"
+    "import": "python3 scripts/import_workbook.py",
+    "build:html": "node scripts/build-html.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",

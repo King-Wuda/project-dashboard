@@ -123,6 +123,10 @@ def main():
         gates = [FILL_STATE.get(fills.get(r, {}).get(c), "") for c in GATE_COLS]
         comment = clean(cell("AE")) or clean(cell("AI"))
         inv = cell("U")
+        rbp = num(cell("S"))
+        if rbp is not None and abs(rbp) > 2:  # a percentage this large is a data error (e.g. a rand amount in the % column)
+            errors.append(f"row {r} {pid}: RBP % is {rbp!r}, which cannot be a percentage; left blank")
+            rbp = None
         if isinstance(inv, str):
             errors.append(f"row {r} {pid}: invoiced % is {inv!r}")
         projects.append({
@@ -135,7 +139,7 @@ def main():
             "startDate": start_date(cell("G")),
             "status": clean(cell("H")),
             "value": num(cell("R")) or 0,
-            "rbp": num(cell("S")),
+            "rbp": rbp,
             "poc": num(cell("T")),
             "invoiced": num(inv),
             "gates": gates,

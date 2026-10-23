@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { DataMenu } from './components/DataMenu';
 import { Drawer } from './components/Drawer';
 import { Issues } from './components/Issues';
 import { Overview, type Nav } from './components/Overview';
@@ -8,6 +9,7 @@ import { TipProvider } from './components/ui';
 import { isArchived } from './lib/health';
 import { issueView, todayIso } from './lib/issues';
 import { date } from './lib/format';
+import { standalone } from './localApi';
 import { useData } from './store';
 
 const TABS: { key: Nav['tab']; label: string }[] = [
@@ -61,12 +63,21 @@ export function App() {
             <label>Data as of{' '}
               <input type="date" aria-label="Data as of" value={state.meta.dataAsOf ?? ''} onChange={(e) => e.target.value && setDataAsOf(e.target.value)} title={date(state.meta.dataAsOf)} />
             </label>
+            {__STANDALONE__ && <DataMenu />}
             <button className="btn" onClick={() => setTheme(theme === 'dark' ? 'light' : theme === 'light' ? 'auto' : 'dark')} aria-label={`Theme: ${theme}`}>
               {theme === 'dark' ? 'Dark' : theme === 'light' ? 'Light' : 'Auto'}
             </button>
           </div>
         </div>
       </header>
+      {__STANDALONE__ && (
+        <div className={`pilot-banner${standalone.canSave() ? '' : ' warn'}`} role="status">
+          <b>Pilot version for feedback.</b>{' '}
+          {standalone.canSave()
+            ? <>Changes are saved in this browser only{standalone.builtAt() ? ` (built ${date(standalone.builtAt())})` : ''}. Use <b>Data ▾ Export backup</b> to keep or share them.</>
+            : <>This browser is blocking storage, so changes will be lost when you close the page. Try Chrome or Edge, or export a backup before closing.</>}
+        </div>
+      )}
       <main>
         {nav.tab === 'overview' && <Overview onOpen={setOpen} onNav={go} />}
         {nav.tab === 'projects' && <Projects params={nav.params ?? {}} onOpen={setOpen} onNew={() => setOpen('new')} onParams={(p) => go({ tab: 'projects', params: p })} />}

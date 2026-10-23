@@ -1,8 +1,8 @@
-import type { AppState, HistoryEntry, Issue, Project } from './types';
+import type { Api } from './apiTypes';
+import { EDITOR, getEditor } from './editor';
+import { localApi } from './localApi';
 
-/** Single-user for now: every change is recorded under this name. Replace with the signed-in user when logins are added. */
-export const EDITOR = 'Gerhardus Uys';
-export const getEditor = () => EDITOR;
+export { EDITOR, getEditor };
 
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
@@ -15,13 +15,15 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
   return data as T;
 }
 
-export const api = {
-  state: () => call<AppState>('GET', '/state'),
-  patchProject: (id: string, patch: Partial<Project>) => call<Project>('PATCH', `/projects/${encodeURIComponent(id)}`, patch),
-  createProject: (p: Partial<Project> & { id: string }) => call<Project>('POST', '/projects', p),
-  history: (entity: string, id: string) => call<HistoryEntry[]>('GET', `/history?entity=${entity}&id=${encodeURIComponent(id)}`),
-  createIssue: (i: Partial<Issue>) => call<Issue>('POST', '/issues', i),
-  patchIssue: (id: string, patch: Partial<Issue>) => call<Issue>('PATCH', `/issues/${encodeURIComponent(id)}`, patch),
-  deleteIssue: (id: string) => call<{ ok: true }>('DELETE', `/issues/${encodeURIComponent(id)}`),
-  setDataAsOf: (dataAsOf: string) => call<AppState['meta']>('PATCH', '/meta', { dataAsOf }),
+const httpApi: Api = {
+  state: () => call('GET', '/state'),
+  patchProject: (id, patch) => call('PATCH', `/projects/${encodeURIComponent(id)}`, patch),
+  createProject: (p) => call('POST', '/projects', p),
+  history: (entity, id) => call('GET', `/history?entity=${entity}&id=${encodeURIComponent(id)}`),
+  createIssue: (i) => call('POST', '/issues', i),
+  patchIssue: (id, patch) => call('PATCH', `/issues/${encodeURIComponent(id)}`, patch),
+  deleteIssue: (id) => call('DELETE', `/issues/${encodeURIComponent(id)}`),
+  setDataAsOf: (dataAsOf) => call('PATCH', '/meta', { dataAsOf }),
 };
+
+export const api: Api = __STANDALONE__ ? localApi : httpApi;

@@ -140,7 +140,7 @@ export function Drawer({ id, onClose }: { id: string | 'new'; onClose: () => voi
                 <input type="number" min={0} step={1000} value={draft.value} onChange={(e) => set('value', Number(e.target.value))} />
               </label>
               <label className="field">RBP %
-                <input type="number" min={0} max={100} step={0.1} value={rbpText} onChange={(e) => setRbpText(e.target.value)} />
+                <input type="number" min={-200} max={200} step={0.1} value={rbpText} onChange={(e) => setRbpText(e.target.value)} />
               </label>
               <label className="field">POC % (progress)
                 <input type="number" min={0} max={100} step={1} value={pocText} onChange={(e) => setPocText(e.target.value)} />

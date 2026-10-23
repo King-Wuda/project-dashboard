@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# Single-file builds; one made with --data contains real project data.
+dist-html/
 # Real project data (customer names, contract values, margins) never goes in git.
 data/
 *.xlsx

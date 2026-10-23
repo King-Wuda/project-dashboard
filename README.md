@@ -22,6 +22,23 @@ For development: `npm run dev` (API on :8787, Vite on :5173). Tests: `npm test`.
 
 With no real data present the app starts on a **synthetic demo dataset** (`demo/seed.demo.json`).
 
+## Share as a single HTML file (pilot / feedback)
+
+To let people try the dashboard before it is hosted, build one self-contained `.html` file. It needs no server and no install:
+the recipient double-clicks it and it opens in their browser.
+
+```bash
+npm run build:html                           # demo data    -> dist-html/dashboard-demo.html
+npm run build:html -- --data data/seed.json  # real data    -> dist-html/dashboard-private.html
+```
+
+- The data is embedded in the file. Each person's edits are saved **in their own browser only**, so two people never see each other's changes.
+- **Data ▾** in the top bar has *Export backup*, *Restore from backup* and *Reset to original data*. Export a backup to keep your edits or to send them back.
+- A page banner says it is a pilot. The same validation and change history as the hosted version run inside the file.
+- Rebuilding with the same data keeps edits already saved in a browser; rebuilding with different data starts that browser fresh.
+- `dashboard-private.html` contains real project data (customer names, contract values, margins). It is git-ignored; share it only with people allowed to see that data, and note some email systems block `.html` attachments (zip it or use Teams/SharePoint).
+- If a browser blocks local storage (some private-browsing modes), the banner says so and edits last only until the page is closed.
+
 ## Load the real workbook
 
 The workbook contains customer names, contract values and margins, so **it and the data derived from it are git-ignored and must stay out of the repository.**
